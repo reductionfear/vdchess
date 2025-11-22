@@ -58,14 +58,20 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
       <div 
         className={`
           text-6xl select-none leading-none
-          ${isWhite ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-gray-900 drop-shadow-[0_2px_4px_rgba(255,255,255,0.3)]'}
-          transition-transform duration-200
-          ${interactive && !draggedPiece ? 'hover:scale-110 cursor-grab active:cursor-grabbing' : ''}
+          ${isWhite 
+            ? 'text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]' 
+            : 'text-gray-900 drop-shadow-[0_2px_5px_rgba(255,255,255,0.4)]'
+          }
+          transition-all duration-200 ease-out
+          ${interactive && !draggedPiece ? 'hover:scale-110 hover:drop-shadow-[0_4px_8px_rgba(59,130,246,0.5)] cursor-grab active:cursor-grabbing active:scale-105' : ''}
         `}
         style={{ 
-          fontFamily: 'Arial Unicode MS, Lucida Grande, sans-serif',
+          fontFamily: 'Arial Unicode MS, Lucida Grande, DejaVu Sans, sans-serif',
           WebkitUserSelect: 'none',
-          userSelect: 'none'
+          userSelect: 'none',
+          textShadow: isWhite 
+            ? '0 0 2px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.8)' 
+            : '0 0 1px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.4)'
         }}
       >
         {pieceChar}
@@ -170,16 +176,25 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
                   `}
                   style={{
                     opacity: isDragging ? 0.3 : 1,
+                    transform: isDragging ? 'scale(0.95)' : 'scale(1)',
                   }}
                 >
                   {/* Labels */}
                   {showLabels && colIndex === 0 && (
-                    <span className={`absolute top-0.5 left-1 text-[10px] font-bold ${isDark ? 'text-[#ebecd0]' : 'text-[#779556]'}`}>
+                    <span className={`
+                      absolute top-0.5 left-1 text-[10px] font-bold 
+                      ${isDark ? 'text-[#ebecd0]' : 'text-[#779556]'}
+                      opacity-80
+                    `}>
                       {square.name[1]}
                     </span>
                   )}
                   {showLabels && rowIndex === 7 && (
-                    <span className={`absolute bottom-0.5 right-1 text-[10px] font-bold ${isDark ? 'text-[#ebecd0]' : 'text-[#779556]'}`}>
+                    <span className={`
+                      absolute bottom-0.5 right-1 text-[10px] font-bold 
+                      ${isDark ? 'text-[#ebecd0]' : 'text-[#779556]'}
+                      opacity-80
+                    `}>
                       {square.name[0]}
                     </span>
                   )}
@@ -196,6 +211,11 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
                   {/* Move hint for selected piece */}
                   {interactive && !square.piece && isSquareSelected(square) && (
                     <div className="w-3 h-3 rounded-full bg-yellow-400 opacity-50 animate-pulse" />
+                  )}
+                  
+                  {/* Drag target indicator */}
+                  {interactive && isDragOver(square) && !square.piece && (
+                    <div className="w-4 h-4 rounded-full border-2 border-blue-400 bg-blue-400 bg-opacity-20 animate-pulse" />
                   )}
                 </div>
               );
