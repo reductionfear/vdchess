@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Timer, RefreshCw, Eye, CheckCircle, XCircle, HelpCircle, Play } from 'lucide-react';
 import Layout from '../components/Layout';
 import ChessBoard from '../components/ChessBoard';
+import EnhancedChessBoard from '../components/EnhancedChessBoard';
 import { AppState, BoardState, Difficulty, GameSettings, Piece, PieceColor, PieceType, Square } from '../types';
 import { createEmptyBoard, generateRandomPosition, calculateAccuracy, getPieceDifferences, fenToBoard } from '../utils/chessLogic';
 import { PIECE_IMAGES, THEME } from '../constants';
@@ -72,6 +73,27 @@ const Trainer: React.FC = () => {
 
   // --- Interaction Handlers ---
   
+  const handlePieceMove = (from: Square, to: Square) => {
+    if (gameState !== AppState.RECONSTRUCT) return;
+
+    // Clone the board
+    const newBoard = [...userBoard.map(row => [...row.map(sq => ({...sq}))])];
+    const fromR = 7 - from.y;
+    const fromC = from.x;
+    const toR = 7 - to.y;
+    const toC = to.x;
+
+    const pieceToMove = newBoard[fromR][fromC].piece;
+    
+    if (pieceToMove) {
+      // Move piece
+      newBoard[fromR][fromC].piece = null;
+      newBoard[toR][toC].piece = pieceToMove;
+      setUserBoard(newBoard);
+    }
+    setMoveSource(null);
+  };
+
   const handleSquareClick = (square: Square) => {
     if (gameState !== AppState.RECONSTRUCT) return;
 
@@ -210,7 +232,7 @@ const Trainer: React.FC = () => {
                                 </h2>
                                 <p className="text-slate-400">Study the board carefully!</p>
                             </div>
-                            <ChessBoard board={originalBoard} />
+                            <EnhancedChessBoard board={originalBoard} />
                             <button 
                                 onClick={() => setGameState(AppState.RECONSTRUCT)}
                                 className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg shadow-lg transition-transform active:scale-95"
@@ -228,10 +250,11 @@ const Trainer: React.FC = () => {
                                 </h2>
                                 <p className="text-slate-400">Select a piece to place, or click board to move</p>
                             </div>
-                            <ChessBoard 
+                            <EnhancedChessBoard 
                                 board={userBoard} 
                                 interactive={true} 
-                                onSquareClick={handleSquareClick} 
+                                onSquareClick={handleSquareClick}
+                                onPieceMove={handlePieceMove}
                                 selectedSquare={moveSource}
                             />
                             <PiecePalette />
@@ -249,11 +272,11 @@ const Trainer: React.FC = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-center text-slate-400 mb-2 text-sm">Original</p>
-                                    <ChessBoard board={originalBoard} showLabels={false} />
+                                    <EnhancedChessBoard board={originalBoard} showLabels={false} />
                                 </div>
                                 <div>
                                     <p className="text-center text-slate-400 mb-2 text-sm">Your Answer</p>
-                                    <ChessBoard 
+                                    <EnhancedChessBoard 
                                         board={userBoard} 
                                         showLabels={false} 
                                         highlightErrors={showDetailedErrors ? detailedErrors : []}
