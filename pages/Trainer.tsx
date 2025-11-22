@@ -73,6 +73,19 @@ const Trainer: React.FC = () => {
 
   // --- Interaction Handlers ---
   
+  const handlePaletteDrop = (piece: Piece, targetSquare: Square) => {
+    if (gameState !== AppState.RECONSTRUCT) return;
+    
+    // Clone the board
+    const newBoard = [...userBoard.map(row => [...row.map(sq => ({...sq}))])];
+    const r = 7 - targetSquare.y;
+    const c = targetSquare.x;
+    
+    // Place the piece from palette with unique ID
+    newBoard[r][c].piece = { ...piece, id: `${piece.id}-${targetSquare.name}-${Date.now()}` };
+    setUserBoard(newBoard);
+  };
+  
   const handlePieceMove = (from: Square, to: Square) => {
     if (gameState !== AppState.RECONSTRUCT) return;
 
@@ -184,13 +197,18 @@ const Trainer: React.FC = () => {
         {pieces.map(p => (
           <button
             key={p.id}
+            draggable={true}
+            onDragStart={(e) => {
+              e.dataTransfer.setData('palette-piece', JSON.stringify(p));
+              e.dataTransfer.effectAllowed = 'copy';
+            }}
             onClick={() => {
                 setSelectedPiece(p);
                 setMoveSource(null);
             }}
             className={`
               p-2 rounded-md transition-all flex justify-center items-center aspect-square
-              text-4xl font-bold select-none
+              text-4xl font-bold select-none cursor-grab active:cursor-grabbing
               ${selectedPiece?.type === p.type && selectedPiece?.color === p.color 
                 ? 'bg-amber-400/20 ring-2 ring-amber-400 scale-110' 
                 : 'hover:bg-slate-700 hover:scale-105 active:scale-95'
@@ -283,6 +301,7 @@ const Trainer: React.FC = () => {
                                 interactive={true} 
                                 onSquareClick={handleSquareClick}
                                 onPieceMove={handlePieceMove}
+                                onPaletteDrop={handlePaletteDrop}
                                 selectedSquare={moveSource}
                             />
                             <PiecePalette />

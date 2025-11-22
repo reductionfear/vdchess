@@ -29,8 +29,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   };
 
   return (
-    <div className="select-none">
-      <div className="grid grid-cols-8 w-full aspect-square border-4 border-slate-700 rounded-lg overflow-hidden shadow-2xl">
+    <div className="select-none w-full max-w-2xl mx-auto">
+      <div className="grid grid-cols-8 border-4 border-slate-700 rounded-lg overflow-hidden shadow-2xl" style={{ aspectRatio: '1' }}>
         {board.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>
             {row.map((square, colIndex) => {
