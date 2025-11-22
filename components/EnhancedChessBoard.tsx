@@ -7,6 +7,7 @@ interface EnhancedChessBoardProps {
   interactive?: boolean;
   onSquareClick?: (square: Square) => void;
   onPieceMove?: (from: Square, to: Square) => void;
+  onPaletteDrop?: (piece: Piece, square: Square) => void;
   selectedSquare?: Square | null;
   showLabels?: boolean;
   highlightErrors?: { square: string }[];
@@ -17,6 +18,7 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
   interactive = false,
   onSquareClick,
   onPieceMove,
+  onPaletteDrop,
   selectedSquare,
   showLabels = true,
   highlightErrors = []
@@ -116,6 +118,20 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
   const handleDrop = (e: React.DragEvent, targetSquare: Square) => {
     e.preventDefault();
     
+    // Check if this is a palette piece
+    const palettePieceData = e.dataTransfer.getData('palette-piece');
+    if (palettePieceData && onPaletteDrop) {
+      try {
+        const piece = JSON.parse(palettePieceData) as Piece;
+        onPaletteDrop(piece, targetSquare);
+        setDragOverSquare(null);
+        return;
+      } catch (error) {
+        console.error('Failed to parse palette piece data', error);
+      }
+    }
+    
+    // Handle board piece drag
     if (!draggedPiece) return;
     
     // Call the move callback if provided
@@ -139,8 +155,8 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
   };
 
   return (
-    <div className="select-none">
-      <div className="grid grid-cols-8 w-full aspect-square border-4 border-slate-700 rounded-lg overflow-hidden shadow-2xl">
+    <div className="select-none w-full max-w-2xl mx-auto">
+      <div className="grid grid-cols-8 border-4 border-slate-700 rounded-lg overflow-hidden shadow-2xl" style={{ aspectRatio: '1' }}>
         {board.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>
             {row.map((square, colIndex) => {
