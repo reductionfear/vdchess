@@ -81,8 +81,8 @@ const Trainer: React.FC = () => {
     const r = 7 - targetSquare.y;
     const c = targetSquare.x;
     
-    // Place the piece from palette
-    newBoard[r][c].piece = { ...piece, id: `${piece.id}-${Date.now()}` };
+    // Place the piece from palette with unique ID
+    newBoard[r][c].piece = { ...piece, id: `${piece.id}-${targetSquare.name}-${Date.now()}` };
     setUserBoard(newBoard);
   };
   

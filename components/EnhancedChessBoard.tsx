@@ -127,7 +127,7 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
         setDragOverSquare(null);
         return;
       } catch (error) {
-        console.error('Failed to parse palette piece data', error);
+        console.error('Failed to parse palette piece data:', palettePieceData, error);
       }
     }
     
