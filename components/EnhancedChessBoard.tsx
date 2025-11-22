@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BoardState, Square, Piece } from '../types';
 import { THEME } from '../constants';
 
@@ -91,7 +91,16 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
     document.body.appendChild(dragImage);
     e.dataTransfer.setDragImage(dragImage, 50, 50);
     
-    setTimeout(() => document.body.removeChild(dragImage), 0);
+    // Safely remove drag image after it's been used
+    setTimeout(() => {
+      try {
+        if (dragImage && dragImage.parentNode) {
+          document.body.removeChild(dragImage);
+        }
+      } catch (error) {
+        // Element already removed, ignore
+      }
+    }, 0);
   };
 
   const handleDragOver = (e: React.DragEvent, square: Square) => {
