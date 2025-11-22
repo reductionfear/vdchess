@@ -167,8 +167,20 @@ const Trainer: React.FC = () => {
       { type: PieceType.PAWN, color: PieceColor.BLACK, id: 'bp' },
     ];
 
+    const getPieceUnicode = (piece: Piece) => {
+      const isWhite = piece.color === PieceColor.WHITE;
+      return {
+        [PieceType.KING]: isWhite ? '♔' : '♚',
+        [PieceType.QUEEN]: isWhite ? '♕' : '♛',
+        [PieceType.ROOK]: isWhite ? '♖' : '♜',
+        [PieceType.BISHOP]: isWhite ? '♗' : '♝',
+        [PieceType.KNIGHT]: isWhite ? '♘' : '♞',
+        [PieceType.PAWN]: isWhite ? '♙' : '♟',
+      }[piece.type];
+    };
+
     return (
-      <div className="grid grid-cols-6 gap-2 p-4 bg-slate-800 rounded-lg border border-slate-700">
+      <div className="grid grid-cols-6 gap-2 p-4 bg-slate-800 rounded-lg border border-slate-700 shadow-lg">
         {pieces.map(p => (
           <button
             key={p.id}
@@ -176,9 +188,18 @@ const Trainer: React.FC = () => {
                 setSelectedPiece(p);
                 setMoveSource(null);
             }}
-            className={`p-2 rounded-md transition-all flex justify-center items-center aspect-square ${selectedPiece?.type === p.type && selectedPiece?.color === p.color ? 'bg-amber-400/20 ring-2 ring-amber-400' : 'hover:bg-slate-700'}`}
+            className={`
+              p-2 rounded-md transition-all flex justify-center items-center aspect-square
+              text-4xl font-bold select-none
+              ${selectedPiece?.type === p.type && selectedPiece?.color === p.color 
+                ? 'bg-amber-400/20 ring-2 ring-amber-400 scale-110' 
+                : 'hover:bg-slate-700 hover:scale-105 active:scale-95'
+              }
+              ${p.color === PieceColor.WHITE ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-gray-800 drop-shadow-[0_2px_4px_rgba(255,255,255,0.3)]'}
+            `}
+            title={`${p.color === PieceColor.WHITE ? 'White' : 'Black'} ${p.type.toUpperCase()}`}
           >
-            <img src={PIECE_IMAGES[`${p.color}${p.type}`]} alt={p.id} className="w-full h-full" />
+            {getPieceUnicode(p)}
           </button>
         ))}
         <button 
@@ -186,9 +207,16 @@ const Trainer: React.FC = () => {
                 setSelectedPiece(null);
                 setMoveSource(null);
             }}
-            className={`col-span-6 mt-2 p-2 rounded border border-slate-600 text-xs text-center ${selectedPiece === null ? 'bg-blue-500/20 text-blue-400 border-blue-500' : 'text-slate-400 hover:bg-slate-700'}`}
+            className={`
+              col-span-6 mt-2 p-2 rounded border border-slate-600 text-xs text-center
+              transition-all duration-200
+              ${selectedPiece === null 
+                ? 'bg-blue-500/20 text-blue-400 border-blue-500 font-semibold' 
+                : 'text-slate-400 hover:bg-slate-700 hover:text-slate-300'
+              }
+            `}
         >
-            {selectedPiece === null ? 'Move / Erase Mode Active' : 'Switch to Move Mode'}
+            {selectedPiece === null ? '✓ Drag/Move Mode Active' : 'Switch to Drag/Move Mode'}
         </button>
       </div>
     );
@@ -326,11 +354,11 @@ const Trainer: React.FC = () => {
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-slate-700 rounded-full w-5 h-5 flex items-center justify-center text-xs text-white mt-0.5 shrink-0">2</span>
-                                <span>In reconstruction, click a piece from palette to place it.</span>
+                                <span>Click a piece from the palette to place it on the board.</span>
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-slate-700 rounded-full w-5 h-5 flex items-center justify-center text-xs text-white mt-0.5 shrink-0">3</span>
-                                <span>To move a piece on board: deselect palette tools, click piece to grab, click new square to drop.</span>
+                                <span><strong>Drag pieces</strong> on the board to move them, or click to select and click destination.</span>
                             </li>
                         </ul>
                         
