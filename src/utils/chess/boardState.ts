@@ -71,14 +71,17 @@ export function makeMove(
     return null;
   }
   
-  // Generate SAN before making the move
-  const san = makeSan(state.position, move);
+  // Clone the position before making the move
+  const newPosition = state.position.clone();
   
-  // Make the move
-  state.position.play(move);
+  // Generate SAN before making the move
+  const san = makeSan(newPosition, move);
+  
+  // Make the move on the cloned position
+  newPosition.play(move);
   
   // Get new FEN using makeFen from chessops
-  const fenString = makeFen(state.position.toSetup());
+  const fenString = makeFen(newPosition.toSetup());
   
   // Truncate history if we're not at the end
   const newHistory = state.moveHistory.slice(0, state.currentMoveIndex + 1);
@@ -94,7 +97,7 @@ export function makeMove(
   });
   
   return {
-    position: state.position,
+    position: newPosition,
     moveHistory: newHistory,
     currentMoveIndex: newHistory.length - 1,
   };

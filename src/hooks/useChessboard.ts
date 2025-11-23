@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Chess } from 'chessops/chess';
 import { parseFen, makeFen } from 'chessops/fen';
 import { PromotionRole } from 'chessops/types';
@@ -26,16 +26,26 @@ export interface UseChessboardOptions {
 }
 
 export function useChessboard(options: UseChessboardOptions = {}) {
+  const { initialFen, onChange } = options;
   const [state, setState] = useState<BoardStateManager>(() => 
-    createBoardState(options.initialFen)
+    createBoardState(initialFen)
   );
+  const prevInitialFenRef = useRef<string | undefined>(initialFen);
+
+  // Reset board when initialFen changes externally
+  useEffect(() => {
+    if (initialFen && initialFen !== prevInitialFenRef.current) {
+      prevInitialFenRef.current = initialFen;
+      setState(createBoardState(initialFen));
+    }
+  }, [initialFen]);
 
   // Notify on changes
   useEffect(() => {
-    if (options.onChange) {
-      options.onChange(state);
+    if (onChange) {
+      onChange(state);
     }
-  }, [state, options.onChange]);
+  }, [state, onChange]);
 
   const makeMove = useCallback((from: string, to: string, promotion?: PromotionRole) => {
     const newState = makeMoveUtil(state, from, to, promotion);
