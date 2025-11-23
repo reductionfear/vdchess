@@ -185,12 +185,9 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
                   onClick={() => handleClick(square)}
                   onMouseEnter={() => interactive && setHoveredSquare(square)}
                   onMouseLeave={() => setHoveredSquare(null)}
-                  onDragStart={(e) => handleDragStart(e, square)}
                   onDragOver={(e) => handleDragOver(e, square)}
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, square)}
-                  onDragEnd={handleDragEnd}
-                  draggable={interactive && square.piece !== null}
                   className={`
                     relative ${bgColor} flex items-center justify-center
                     transition-all duration-200 ease-in-out
@@ -228,7 +225,10 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
                   {/* Piece */}
                   {square.piece && (
                     <div 
-                      className="w-full h-full flex items-center justify-center pointer-events-none"
+                      draggable={interactive}
+                      onDragStart={(e) => handleDragStart(e, square)}
+                      onDragEnd={handleDragEnd}
+                      className="w-full h-full flex items-center justify-center"
                     >
                       {getPieceSVG(square.piece)}
                     </div>
