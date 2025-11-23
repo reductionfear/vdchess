@@ -4,6 +4,7 @@ import { ArrowLeft, Timer, RefreshCw, Eye, CheckCircle, XCircle, HelpCircle, Pla
 import Layout from '../components/Layout';
 import ChessBoard from '../components/ChessBoard';
 import EnhancedChessBoard from '../components/EnhancedChessBoard';
+import RecreatePositionEditor from '../components/RecreatePositionEditor';
 import { AppState, BoardState, Difficulty, GameSettings, Piece, PieceColor, PieceType, Square } from '../types';
 import { createEmptyBoard, generateRandomPosition, calculateAccuracy, getPieceDifferences, fenToBoard } from '../utils/chessLogic';
 import { PIECE_IMAGES, THEME } from '../constants';
@@ -22,10 +23,6 @@ const Trainer: React.FC = () => {
   
   // Timer
   const [timeLeft, setTimeLeft] = useState(settings.memorizeTime);
-  
-  // Reconstruction UI
-  const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
-  const [moveSource, setMoveSource] = useState<Square | null>(null);
   
   // Results
   const [accuracy, setAccuracy] = useState(0);
@@ -50,8 +47,6 @@ const Trainer: React.FC = () => {
     setGameState(AppState.MEMORIZE);
     setTimeLeft(settings.memorizeTime);
     setShowDetailedErrors(false);
-    setSelectedPiece(null);
-    setMoveSource(null);
   };
 
   // --- Timer Logic ---
@@ -71,163 +66,13 @@ const Trainer: React.FC = () => {
     }
   }, [timeLeft, gameState]);
 
-  // --- Interaction Handlers ---
-  
-  const handlePaletteDrop = (piece: Piece, targetSquare: Square) => {
-    if (gameState !== AppState.RECONSTRUCT) return;
-    
-    // Clone the board
-    const newBoard = [...userBoard.map(row => [...row.map(sq => ({...sq}))])];
-    const r = 7 - targetSquare.y;
-    const c = targetSquare.x;
-    
-    // Place the piece from palette with unique ID
-    newBoard[r][c].piece = { ...piece, id: `${piece.id}-${targetSquare.name}-${Date.now()}` };
-    setUserBoard(newBoard);
-  };
-  
-  const handlePieceMove = (from: Square, to: Square) => {
-    if (gameState !== AppState.RECONSTRUCT) return;
-
-    // Clone the board
-    const newBoard = [...userBoard.map(row => [...row.map(sq => ({...sq}))])];
-    const fromR = 7 - from.y;
-    const fromC = from.x;
-    const toR = 7 - to.y;
-    const toC = to.x;
-
-    const pieceToMove = newBoard[fromR][fromC].piece;
-    
-    if (pieceToMove) {
-      // Move piece
-      newBoard[fromR][fromC].piece = null;
-      newBoard[toR][toC].piece = pieceToMove;
-      setUserBoard(newBoard);
-    }
-    setMoveSource(null);
-  };
-
-  const handleSquareClick = (square: Square) => {
-    if (gameState !== AppState.RECONSTRUCT) return;
-
-    // Clone the board
-    const newBoard = [...userBoard.map(row => [...row.map(sq => ({...sq}))])];
-    const r = 7 - square.y;
-    const c = square.x;
-    const targetSquare = newBoard[r][c];
-
-    // 1. PLACEMENT MODE (Palette piece selected)
-    if (selectedPiece) {
-      // Place piece
-      targetSquare.piece = { ...selectedPiece, id: `${selectedPiece.id}-${Date.now()}` };
-      setUserBoard(newBoard);
-      setMoveSource(null); // Cancel any move
-      setSelectedPiece(null); // Deselect the palette piece after placing
-      return;
-    }
-
-    // 2. MOVE MODE (No palette piece selected)
-    if (!moveSource) {
-        // Selecting source
-        if (targetSquare.piece) {
-            setMoveSource(square);
-        }
-    } else {
-        // Selecting destination
-        if (moveSource.x === square.x && moveSource.y === square.y) {
-            // Clicked same square -> Deselect
-            setMoveSource(null);
-        } else {
-            // Moving to a new square
-            const sourceR = 7 - moveSource.y;
-            const sourceC = moveSource.x;
-            
-            const pieceToMove = newBoard[sourceR][sourceC].piece;
-            
-            if (pieceToMove) {
-                // Move piece
-                newBoard[sourceR][sourceC].piece = null;
-                targetSquare.piece = pieceToMove;
-                setUserBoard(newBoard);
-            }
-            setMoveSource(null);
-        }
-    }
-  };
-
+  // --- Submit Handler ---
   const handleSubmit = () => {
     const acc = calculateAccuracy(originalBoard, userBoard);
     const errs = getPieceDifferences(originalBoard, userBoard);
     setAccuracy(acc);
     setDetailedErrors(errs);
     setGameState(AppState.RESULT);
-  };
-
-  // --- Sub Components ---
-
-  const PiecePalette = () => {
-    const pieces: Piece[] = [
-      { type: PieceType.KING, color: PieceColor.WHITE, id: 'wk' },
-      { type: PieceType.QUEEN, color: PieceColor.WHITE, id: 'wq' },
-      { type: PieceType.ROOK, color: PieceColor.WHITE, id: 'wr' },
-      { type: PieceType.BISHOP, color: PieceColor.WHITE, id: 'wb' },
-      { type: PieceType.KNIGHT, color: PieceColor.WHITE, id: 'wn' },
-      { type: PieceType.PAWN, color: PieceColor.WHITE, id: 'wp' },
-      { type: PieceType.KING, color: PieceColor.BLACK, id: 'bk' },
-      { type: PieceType.QUEEN, color: PieceColor.BLACK, id: 'bq' },
-      { type: PieceType.ROOK, color: PieceColor.BLACK, id: 'br' },
-      { type: PieceType.BISHOP, color: PieceColor.BLACK, id: 'bb' },
-      { type: PieceType.KNIGHT, color: PieceColor.BLACK, id: 'bn' },
-      { type: PieceType.PAWN, color: PieceColor.BLACK, id: 'bp' },
-    ];
-
-    const getPieceUnicode = (piece: Piece) => {
-      const isWhite = piece.color === PieceColor.WHITE;
-      return {
-        [PieceType.KING]: isWhite ? '♔' : '♚',
-        [PieceType.QUEEN]: isWhite ? '♕' : '♛',
-        [PieceType.ROOK]: isWhite ? '♖' : '♜',
-        [PieceType.BISHOP]: isWhite ? '♗' : '♝',
-        [PieceType.KNIGHT]: isWhite ? '♘' : '♞',
-        [PieceType.PAWN]: isWhite ? '♙' : '♟',
-      }[piece.type];
-    };
-
-    return (
-      <div className="grid grid-cols-6 gap-2 p-4 bg-slate-800 rounded-lg border border-slate-700 shadow-lg">
-        {pieces.map(p => (
-          <button
-            key={p.id}
-            draggable={true}
-            onDragStart={(e) => {
-              e.dataTransfer.setData('palette-piece', JSON.stringify(p));
-              e.dataTransfer.effectAllowed = 'copy';
-            }}
-            onClick={() => {
-                // Toggle selection: if same piece is clicked, deselect it
-                if (selectedPiece?.type === p.type && selectedPiece?.color === p.color) {
-                    setSelectedPiece(null);
-                } else {
-                    setSelectedPiece(p);
-                }
-                setMoveSource(null);
-            }}
-            className={`
-              p-2 rounded-md transition-all flex justify-center items-center aspect-square
-              text-4xl font-bold select-none cursor-grab active:cursor-grabbing
-              ${selectedPiece?.type === p.type && selectedPiece?.color === p.color 
-                ? 'bg-amber-400/20 ring-2 ring-amber-400 scale-110' 
-                : 'hover:bg-slate-700 hover:scale-105 active:scale-95'
-              }
-              ${p.color === PieceColor.WHITE ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-gray-800 drop-shadow-[0_2px_4px_rgba(255,255,255,0.3)]'}
-            `}
-            title={`${p.color === PieceColor.WHITE ? 'White' : 'Black'} ${p.type.toUpperCase()}`}
-          >
-            {getPieceUnicode(p)}
-          </button>
-        ))}
-      </div>
-    );
   };
 
   // --- Render ---
@@ -286,15 +131,10 @@ const Trainer: React.FC = () => {
                                 </h2>
                                 <p className="text-slate-400">Drag pieces from palette to place, or drag on board to move</p>
                             </div>
-                            <EnhancedChessBoard 
-                                board={userBoard} 
-                                interactive={true} 
-                                onSquareClick={handleSquareClick}
-                                onPieceMove={handlePieceMove}
-                                onPaletteDrop={handlePaletteDrop}
-                                selectedSquare={moveSource}
+                            <RecreatePositionEditor 
+                                board={userBoard}
+                                onBoardChange={setUserBoard}
                             />
-                            <PiecePalette />
                             <button 
                                 onClick={handleSubmit}
                                 className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg shadow-lg transition-transform active:scale-95"
