@@ -53,6 +53,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                     ${interactive ? 'cursor-pointer hover:opacity-90' : ''}
                     ${overlayClass}
                   `}
+                  style={{ aspectRatio: '1' }}
                 >
                   {/* Labels */}
                   {showLabels && colIndex === 0 && (

@@ -200,6 +200,7 @@ const EnhancedChessBoard: React.FC<EnhancedChessBoardProps> = ({
                     chess-square
                   `}
                   style={{
+                    aspectRatio: '1',
                     opacity: isDragging ? 0.3 : 1,
                     transform: isDragging ? 'scale(0.95)' : 'scale(1)',
                   }}
