@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Crown, BarChart2, Play, Lock, Clock, ChevronRight, Edit3 } from 'lucide-react';
+import { Crown, BarChart2, Play, Lock, Clock, ChevronRight, Edit3, Microscope } from 'lucide-react';
 import Layout from '../components/Layout';
 import { Difficulty } from '../types';
 
@@ -82,12 +82,12 @@ const Home: React.FC = () => {
                   </button>
                   
                   <button 
-                    onClick={() => navigate('/auth')}
+                    onClick={() => navigate('/analysis')}
                     className="p-6 bg-slate-800 border border-slate-700 hover:border-slate-600 rounded-xl transition-all text-left"
                   >
-                    <BarChart2 className="h-6 w-6 text-slate-500 mb-2" />
-                    <h3 className="text-lg font-bold text-slate-300">Dashboard</h3>
-                    <p className="text-xs text-slate-500">Requires sign in</p>
+                    <Microscope className="h-6 w-6 text-indigo-400 mb-2" />
+                    <h3 className="text-lg font-bold text-slate-300">Analysis Board</h3>
+                    <p className="text-xs text-slate-500">Study positions</p>
                   </button>
                </div>
             </div>
@@ -160,7 +160,7 @@ const Home: React.FC = () => {
             </div>
           )}
 
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center border-t border-slate-800 pt-8 w-full max-w-4xl mx-auto">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-8 text-center border-t border-slate-800 pt-8 w-full max-w-5xl mx-auto">
              <div>
                 <Crown className="h-6 w-6 text-amber-400 mx-auto mb-2" />
                 <h4 className="text-white font-semibold">Classic Mode</h4>
@@ -170,6 +170,11 @@ const Home: React.FC = () => {
                 <Edit3 className="h-6 w-6 text-amber-400 mx-auto mb-2" />
                 <h4 className="text-white font-semibold">Custom Position</h4>
                 <p className="text-slate-500 text-sm">Train specific openings or endgames</p>
+             </div>
+             <div>
+                <Microscope className="h-6 w-6 text-indigo-400 mx-auto mb-2" />
+                <h4 className="text-white font-semibold">Analysis Board</h4>
+                <p className="text-slate-500 text-sm">Study and analyze positions</p>
              </div>
              <div>
                 <BarChart2 className="h-6 w-6 text-amber-400 mx-auto mb-2" />
