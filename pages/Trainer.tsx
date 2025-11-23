@@ -122,6 +122,7 @@ const Trainer: React.FC = () => {
       targetSquare.piece = { ...selectedPiece, id: `${selectedPiece.id}-${Date.now()}` };
       setUserBoard(newBoard);
       setMoveSource(null); // Cancel any move
+      setSelectedPiece(null); // Deselect the palette piece after placing
       return;
     }
 
@@ -203,7 +204,12 @@ const Trainer: React.FC = () => {
               e.dataTransfer.effectAllowed = 'copy';
             }}
             onClick={() => {
-                setSelectedPiece(p);
+                // Toggle selection: if same piece is clicked, deselect it
+                if (selectedPiece?.type === p.type && selectedPiece?.color === p.color) {
+                    setSelectedPiece(null);
+                } else {
+                    setSelectedPiece(p);
+                }
                 setMoveSource(null);
             }}
             className={`
