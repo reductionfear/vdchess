@@ -5,6 +5,7 @@ import Trainer from './pages/Trainer';
 import Auth from './pages/Auth';
 import Pricing from './pages/Pricing';
 import Analysis from './pages/Analysis';
+import Editor from './pages/Editor';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/trainer" element={<Trainer />} />
+        <Route path="/editor" element={<Editor />} />
         <Route path="/analysis" element={<Analysis />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/pricing" element={<Pricing />} />
