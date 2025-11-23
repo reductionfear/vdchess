@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import EnhancedChessBoard from './EnhancedChessBoard';
 import PiecePalette from './PiecePalette';
 import { BoardState, Piece, Square } from '../types';
@@ -14,12 +14,18 @@ const RecreatePositionEditor: React.FC<RecreatePositionEditorProps> = ({
 }) => {
   const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
   const [moveSource, setMoveSource] = useState<Square | null>(null);
+  const idCounterRef = useRef(0);
+
+  const generateUniqueId = (baseId: string): string => {
+    idCounterRef.current += 1;
+    return `${baseId}-${Date.now()}-${idCounterRef.current}`;
+  };
 
   const handlePaletteDrop = (piece: Piece, targetSquare: Square) => {
     const newBoard = [...board.map(row => [...row.map(sq => ({...sq}))])];
     const r = 7 - targetSquare.y;
     const c = targetSquare.x;
-    newBoard[r][c].piece = { ...piece, id: `${piece.id}-${targetSquare.name}-${Date.now()}` };
+    newBoard[r][c].piece = { ...piece, id: generateUniqueId(`${piece.id}-${targetSquare.name}`) };
     onBoardChange(newBoard);
   };
 
@@ -48,7 +54,7 @@ const RecreatePositionEditor: React.FC<RecreatePositionEditorProps> = ({
 
     // 1. PLACEMENT MODE (Palette piece selected)
     if (selectedPiece) {
-      targetSquare.piece = { ...selectedPiece, id: `${selectedPiece.id}-${Date.now()}` };
+      targetSquare.piece = { ...selectedPiece, id: generateUniqueId(selectedPiece.id) };
       onBoardChange(newBoard);
       setMoveSource(null);
       setSelectedPiece(null); // Deselect after placing

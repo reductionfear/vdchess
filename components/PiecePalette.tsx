@@ -39,9 +39,13 @@ const PiecePalette: React.FC<PiecePaletteProps> = ({
     }[piece.type];
   };
 
+  const isPieceEqual = (p1: Piece | null, p2: Piece) => {
+    return p1 !== null && p1.type === p2.type && p1.color === p2.color;
+  };
+
   const handlePieceClick = (piece: Piece) => {
     // Toggle selection: if same piece is clicked, deselect it
-    if (selectedPiece?.type === piece.type && selectedPiece?.color === piece.color) {
+    if (isPieceEqual(selectedPiece, piece)) {
       onPieceSelect(null);
     } else {
       onPieceSelect(piece);
@@ -66,7 +70,7 @@ const PiecePalette: React.FC<PiecePaletteProps> = ({
           className={`
             p-2 rounded-md transition-all flex justify-center items-center aspect-square
             text-4xl font-bold select-none cursor-grab active:cursor-grabbing
-            ${selectedPiece?.type === p.type && selectedPiece?.color === p.color 
+            ${isPieceEqual(selectedPiece, p)
               ? 'bg-amber-400/20 ring-2 ring-amber-400 scale-110' 
               : 'hover:bg-slate-700 hover:scale-105 active:scale-95'
             }
