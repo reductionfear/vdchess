@@ -4,7 +4,7 @@ import { ArrowLeft, RotateCcw, Trash2, Play, Copy, CheckCircle, FlipVertical } f
 import EnhancedChessBoard from './EnhancedChessBoard';
 import PiecePalette from './PiecePalette';
 import { BoardState, Piece, PieceColor, PieceType, Square } from '../types';
-import { createEmptyBoard, fenToBoard, boardToFen, getStartingPositionFen } from '../utils/chessLogic';
+import { createEmptyBoard, fenToBoard, boardToFen, getStartingPositionFen } from '../src/utils/chess';
 
 interface BoardEditorProps {
   onStartTraining?: (fen: string) => void;

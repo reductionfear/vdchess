@@ -6,7 +6,7 @@ import ChessBoard from '../components/ChessBoard';
 import EnhancedChessBoard from '../components/EnhancedChessBoard';
 import RecreatePositionEditor from '../components/RecreatePositionEditor';
 import { AppState, BoardState, Difficulty, GameSettings, Piece, PieceColor, PieceType, Square } from '../types';
-import { createEmptyBoard, generateRandomPosition, calculateAccuracy, getPieceDifferences, fenToBoard } from '../utils/chessLogic';
+import { createEmptyBoard, generateRandomPosition, calculateAccuracy, getPieceDifferences, fenToBoard } from '../src/utils/chess';
 import { PIECE_IMAGES, THEME } from '../constants';
 
 const Trainer: React.FC = () => {
