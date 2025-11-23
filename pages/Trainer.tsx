@@ -220,22 +220,6 @@ const Trainer: React.FC = () => {
             {getPieceUnicode(p)}
           </button>
         ))}
-        <button 
-            onClick={() => {
-                setSelectedPiece(null);
-                setMoveSource(null);
-            }}
-            className={`
-              col-span-6 mt-2 p-2 rounded border border-slate-600 text-xs text-center
-              transition-all duration-200
-              ${selectedPiece === null 
-                ? 'bg-blue-500/20 text-blue-400 border-blue-500 font-semibold' 
-                : 'text-slate-400 hover:bg-slate-700 hover:text-slate-300'
-              }
-            `}
-        >
-            {selectedPiece === null ? '✓ Drag/Move Mode Active' : 'Switch to Drag/Move Mode'}
-        </button>
       </div>
     );
   };
@@ -294,7 +278,7 @@ const Trainer: React.FC = () => {
                                 <h2 className="text-2xl font-bold text-white flex items-center justify-center gap-2">
                                     <RefreshCw className="text-amber-400"/> Recreate Position
                                 </h2>
-                                <p className="text-slate-400">Select a piece to place, or click board to move</p>
+                                <p className="text-slate-400">Drag pieces from palette to place, or drag on board to move</p>
                             </div>
                             <EnhancedChessBoard 
                                 board={userBoard} 
@@ -373,11 +357,11 @@ const Trainer: React.FC = () => {
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-slate-700 rounded-full w-5 h-5 flex items-center justify-center text-xs text-white mt-0.5 shrink-0">2</span>
-                                <span>Click a piece from the palette to place it on the board.</span>
+                                <span><strong>Drag and drop pieces</strong> from the palette to place them on the board.</span>
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-slate-700 rounded-full w-5 h-5 flex items-center justify-center text-xs text-white mt-0.5 shrink-0">3</span>
-                                <span><strong>Drag pieces</strong> on the board to move them, or click to select and click destination.</span>
+                                <span><strong>Drag and drop pieces</strong> on the board to move them between squares.</span>
                             </li>
                         </ul>
                         
