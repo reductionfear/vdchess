@@ -94,25 +94,11 @@ const Analysis: React.FC = () => {
           {/* Analysis Board */}
           <AnalysisBoard
             initialFen={currentFen || undefined}
-            onFenChange={(fen) => {
-              // Update current FEN display
-              setCurrentFen(fen);
-            }}
             showControls={true}
             showSettings={true}
             showMoveList={true}
             showEvaluation={true}
           />
-
-          {/* Current FEN Display */}
-          {currentFen && (
-            <div className="mt-6 bg-slate-800 p-4 rounded-lg border border-slate-700">
-              <h3 className="text-sm font-semibold text-slate-200 mb-2">Current Position (FEN)</h3>
-              <code className="block p-3 bg-slate-900 rounded text-xs text-slate-300 font-mono break-all">
-                {currentFen}
-              </code>
-            </div>
-          )}
 
           {/* Feature Overview */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

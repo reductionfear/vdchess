@@ -32,6 +32,7 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
   const boardRef = useRef<HTMLDivElement>(null);
   const [flipped, setFlipped] = useState(false);
   const [drawingArrow, setDrawingArrow] = useState<{ from: string } | null>(null);
+  const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
 
   // Chess state management
   const {
@@ -67,13 +68,6 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     evaluation,
     isAnalyzing,
   } = useAnalysis();
-
-  // Notify parent of FEN changes
-  useEffect(() => {
-    if (onFenChange) {
-      onFenChange(getCurrentFen());
-    }
-  }, [currentMoveIndex, onFenChange, getCurrentFen]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -158,11 +152,45 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     addArrow('d7', 'd5', 'red');
   }, [addArrow]);
 
-  // Handle square click - could be used for drawing arrows
+  // Handle square click - implement piece selection and movement
   const handleSquareClick = useCallback((square: string) => {
-    // Right-click or Shift+click to draw arrows
-    console.log('Square clicked:', square);
-  }, []);
+    // If no square is selected, select this square (if it has a piece)
+    if (!selectedSquare) {
+      // Check if the square has a piece of the current player
+      // Chessops uses 0-63 indexing: a1=0, b1=1, ..., h1=7, a2=8, ..., h8=63
+      const file = square.charCodeAt(0) - 97; // a=0, b=1, ..., h=7
+      const rank = parseInt(square[1]) - 1; // 1=0, 2=1, ..., 8=7
+      const squareIndex = rank * 8 + file;
+      const piece = state.position.board.get(squareIndex);
+      
+      if (piece && piece.color === state.position.turn) {
+        setSelectedSquare(square);
+      }
+    } else {
+      // Try to make a move from selected square to this square
+      if (selectedSquare !== square) {
+        const moveSuccess = makeMove(selectedSquare, square);
+        if (!moveSuccess) {
+          // If move failed, check if clicking another piece to select it
+          const file = square.charCodeAt(0) - 97;
+          const rank = parseInt(square[1]) - 1;
+          const squareIndex = rank * 8 + file;
+          const piece = state.position.board.get(squareIndex);
+          
+          if (piece && piece.color === state.position.turn) {
+            setSelectedSquare(square);
+          } else {
+            setSelectedSquare(null);
+          }
+        } else {
+          setSelectedSquare(null);
+        }
+      } else {
+        // Clicked the same square, deselect
+        setSelectedSquare(null);
+      }
+    }
+  }, [selectedSquare, state.position, makeMove]);
 
   // Handle square right-click for arrow drawing
   const handleSquareRightClick = useCallback((square: string, e: React.MouseEvent) => {
@@ -255,6 +283,7 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
               arrows={arrows}
               circles={circles}
               onSquareClick={handleSquareClick}
+              highlightSquares={selectedSquare ? [selectedSquare] : []}
             />
           </div>
 

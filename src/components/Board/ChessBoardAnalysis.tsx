@@ -78,7 +78,10 @@ const ChessBoardAnalysis: React.FC<ChessBoardAnalysisProps> = ({
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
         const squareName = getSquareName(rank, file);
-        const squareIndex = (7 - (parseInt(squareName[1]) - 1)) * 8 + (squareName.charCodeAt(0) - 97);
+        // Chessops uses 0-63 indexing: a1=0, b1=1, ..., h1=7, a2=8, ..., h8=63
+        const sqFile = squareName.charCodeAt(0) - 97; // a=0, b=1, ..., h=7
+        const sqRank = parseInt(squareName[1]) - 1; // 1=0, 2=1, ..., 8=7
+        const squareIndex = sqRank * 8 + sqFile;
         const piece = position.board.get(squareIndex);
         const isLight = (rank + file) % 2 === 0;
         
