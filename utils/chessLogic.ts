@@ -54,6 +54,57 @@ export const fenToBoard = (fen: string): BoardState => {
   return board;
 };
 
+export const boardToFen = (
+  board: BoardState, 
+  turn: 'w' | 'b' = 'w',
+  castling: string = 'KQkq',
+  enPassant: string = '-',
+  halfmoves: number = 0,
+  fullmoves: number = 1
+): string => {
+  let fen = '';
+  
+  // Build position part (rows from rank 8 to rank 1)
+  for (let row = 0; row < 8; row++) {
+    let emptyCount = 0;
+    
+    for (let col = 0; col < 8; col++) {
+      const piece = board[row][col].piece;
+      
+      if (piece) {
+        // Add any accumulated empty squares
+        if (emptyCount > 0) {
+          fen += emptyCount;
+          emptyCount = 0;
+        }
+        
+        // Add piece character
+        const pieceChar = piece.type;
+        fen += piece.color === PieceColor.WHITE ? pieceChar.toUpperCase() : pieceChar;
+      } else {
+        emptyCount++;
+      }
+    }
+    
+    // Add final empty count if any
+    if (emptyCount > 0) {
+      fen += emptyCount;
+    }
+    
+    // Add rank separator (except after last rank)
+    if (row < 7) {
+      fen += '/';
+    }
+  }
+  
+  // Add other FEN components
+  return `${fen} ${turn} ${castling} ${enPassant} ${halfmoves} ${fullmoves}`;
+};
+
+export const getStartingPositionFen = (): string => {
+  return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+};
+
 // A simplified random position generator for training visual memory.
 // It places Kings correctly (not touching) and scatters other pieces.
 export const generateRandomPosition = (difficulty: Difficulty): BoardState => {

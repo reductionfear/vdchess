@@ -137,22 +137,36 @@ const Home: React.FC = () => {
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-white">Custom Position</h3>
-                                <p className="text-slate-400 text-sm">Load any FEN string</p>
+                                <p className="text-slate-400 text-sm">Create or load positions</p>
                             </div>
                         </div>
                         <div className="flex-grow flex flex-col gap-4">
+                            <button 
+                                onClick={() => navigate('/editor')}
+                                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors"
+                            >
+                                Open Board Editor
+                            </button>
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-slate-700"></div>
+                                </div>
+                                <div className="relative flex justify-center text-xs">
+                                    <span className="bg-slate-800 px-2 text-slate-500">or paste FEN</span>
+                                </div>
+                            </div>
                             <textarea 
                                 value={customFen}
                                 onChange={(e) => setCustomFen(e.target.value)}
                                 placeholder="Paste FEN here (e.g., rnbqk...)"
-                                className="w-full h-24 bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white placeholder:text-slate-600 resize-none focus:ring-2 focus:ring-indigo-500 outline-none"
+                                className="w-full h-20 bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white placeholder:text-slate-600 resize-none focus:ring-2 focus:ring-indigo-500 outline-none"
                             />
                             <button 
                                 onClick={startCustomTraining}
                                 disabled={!customFen}
                                 className={`w-full py-3 font-bold rounded-lg transition-colors ${customFen ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}
                             >
-                                Load Position
+                                Load FEN & Train
                             </button>
                         </div>
                     </div>
@@ -168,8 +182,8 @@ const Home: React.FC = () => {
              </div>
              <div>
                 <Edit3 className="h-6 w-6 text-amber-400 mx-auto mb-2" />
-                <h4 className="text-white font-semibold">Custom Position</h4>
-                <p className="text-slate-500 text-sm">Train specific openings or endgames</p>
+                <h4 className="text-white font-semibold">Board Editor</h4>
+                <p className="text-slate-500 text-sm">Create and edit positions visually</p>
              </div>
              <div>
                 <Microscope className="h-6 w-6 text-indigo-400 mx-auto mb-2" />
