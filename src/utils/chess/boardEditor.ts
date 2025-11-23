@@ -1,8 +1,11 @@
 import { Chess } from 'chessops/chess';
 import { parseFen, makeFen } from 'chessops/fen';
 import { parseSquare, makeSquare } from 'chessops/util';
-import { BoardState, Piece, PieceColor, PieceType, Square } from '../../../types';
-import { FILES, RANKS } from '../../../constants';
+import { BoardState, Piece, PieceColor, PieceType, Square } from '@/types';
+import { FILES, RANKS } from '@/constants';
+
+// Counter for generating unique piece IDs
+let pieceIdCounter = 0;
 
 /**
  * Create an empty board state in the legacy format
@@ -55,7 +58,7 @@ export function fenToBoard(fen: string): BoardState {
         board[row][col].piece = {
           type: piece.role as PieceType,
           color: piece.color as PieceColor,
-          id: `${piece.color}-${piece.role}-${sq}-${Date.now()}`
+          id: `${piece.color}-${piece.role}-${sq}-${++pieceIdCounter}`
         };
       }
     }
@@ -200,7 +203,7 @@ export function generateRandomPosition(difficulty: string): BoardState {
     board[7 - y][x].piece = {
       type,
       color,
-      id: `p-${i}`,
+      id: `p-${++pieceIdCounter}`,
     };
   }
 
