@@ -5,7 +5,7 @@ import { useChessboard } from '../../hooks/useChessboard';
 import { useAnalysis } from '../../hooks/useAnalysis';
 import BoardControls from '../Board/BoardControls';
 import BoardSettings from '../Board/BoardSettings';
-import ChessBoardAnalysis from '../Board/ChessBoardAnalysis';
+import ChessBoardInteractive from '../Board/ChessBoardInteractive';
 import MoveList from './MoveList';
 import Evaluation from './Evaluation';
 import UnderboardMenu from './UnderboardMenu';
@@ -73,7 +73,9 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     if (onFenChange) {
       onFenChange(getCurrentFen());
     }
-  }, [currentMoveIndex, onFenChange, getCurrentFen]);
+    // Only trigger when currentMoveIndex changes, not on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMoveIndex]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -247,14 +249,16 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
             className="relative mx-auto max-w-2xl"
             style={boardStyle}
           >
-            <ChessBoardAnalysis
+            <ChessBoardInteractive
               position={state.position}
               flipped={flipped}
               showCoordinates={settings.showCoordinates}
               lastMove={settings.highlightLastMove ? getLastMove() : undefined}
               arrows={arrows}
               circles={circles}
+              onMove={(from, to) => makeMove(from, to)}
               onSquareClick={handleSquareClick}
+              viewOnly={currentMoveIndex < moveHistory.length - 1}
             />
           </div>
 
