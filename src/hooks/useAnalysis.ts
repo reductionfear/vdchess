@@ -56,7 +56,7 @@ export function useAnalysis() {
   }, []);
 
   const updateZoomLevel = useCallback((zoom: number) => {
-    setSettings(prev => ({ ...prev, zoomLevel: Math.max(0, Math.min(100, zoom)) }));
+    setSettings(prev => ({ ...prev, zoomLevel: Math.max(50, Math.min(150, zoom)) }));
   }, []);
 
   const toggleTheme = useCallback(() => {

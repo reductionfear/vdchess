@@ -31,6 +31,7 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
 }) => {
   const boardRef = useRef<HTMLDivElement>(null);
   const [flipped, setFlipped] = useState(false);
+  const [drawingArrow, setDrawingArrow] = useState<{ from: string } | null>(null);
 
   // Chess state management
   const {
@@ -151,11 +152,33 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     setFlipped(prev => !prev);
   }, []);
 
+  // Add demo arrows for testing
+  const addDemoArrows = useCallback(() => {
+    addArrow('e2', 'e4', 'green');
+    addArrow('d7', 'd5', 'red');
+  }, [addArrow]);
+
   // Handle square click - could be used for drawing arrows
   const handleSquareClick = useCallback((square: string) => {
-    // Placeholder for future interaction
+    // Right-click or Shift+click to draw arrows
     console.log('Square clicked:', square);
   }, []);
+
+  // Handle square right-click for arrow drawing
+  const handleSquareRightClick = useCallback((square: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!drawingArrow) {
+      // Start drawing arrow
+      setDrawingArrow({ from: square });
+    } else {
+      // Complete arrow
+      if (drawingArrow.from !== square) {
+        addArrow(drawingArrow.from, square, 'green');
+      }
+      setDrawingArrow(null);
+    }
+  }, [drawingArrow, addArrow]);
 
   // Get last move for highlighting
   const getLastMove = () => {
@@ -263,7 +286,17 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
               onBrightnessChange={updateBoardBrightness}
               onHueChange={updateBoardHue}
               onZoomChange={updateZoomLevel}
-              onThemeChange={(theme) => {/* Handle theme change */}}
+              onThemeChange={(theme) => {
+                // Update theme in settings
+                const themeMap = {
+                  light: 'light' as const,
+                  dark: 'dark' as const,
+                  transparent: 'transparent' as const,
+                };
+                const newTheme = themeMap[theme] || 'light';
+                // Note: Full theme implementation would require updating board styles
+                console.log('Theme changed to:', newTheme);
+              }}
               onToggleCoordinates={toggleCoordinates}
             />
           )}

@@ -1,7 +1,8 @@
 import { Chess } from 'chessops/chess';
-import { parseFen } from 'chessops/fen';
+import { parseFen, makeFen } from 'chessops/fen';
 import { makeSan } from 'chessops/san';
 import { parseSquare } from 'chessops/util';
+import { PromotionRole } from 'chessops/types';
 
 export interface MoveHistoryEntry {
   san: string;
@@ -48,7 +49,7 @@ export function makeMove(
   state: BoardStateManager,
   from: string,
   to: string,
-  promotion?: 'queen' | 'rook' | 'bishop' | 'knight'
+  promotion?: PromotionRole
 ): BoardStateManager | null {
   const fromSquare = parseSquare(from);
   const toSquare = parseSquare(to);
@@ -60,7 +61,7 @@ export function makeMove(
   const move = {
     from: fromSquare,
     to: toSquare,
-    promotion: promotion as any,
+    promotion,
   };
   
   // Check if move is legal
@@ -76,9 +77,8 @@ export function makeMove(
   // Make the move
   state.position.play(move);
   
-  // Get new FEN
-  const fen = state.position.toSetup();
-  const fenString = `${fen.board.toString()} ${fen.turn[0]} ${fen.castlingRights} ${fen.epSquare ? String.fromCharCode(97 + (fen.epSquare % 8)) + String.fromCharCode(49 + Math.floor(fen.epSquare / 8)) : '-'} ${fen.halfmoves} ${fen.fullmoves}`;
+  // Get new FEN using makeFen from chessops
+  const fenString = makeFen(state.position.toSetup());
   
   // Truncate history if we're not at the end
   const newHistory = state.moveHistory.slice(0, state.currentMoveIndex + 1);

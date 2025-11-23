@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Chess } from 'chessops/chess';
 import { parseFen, makeFen } from 'chessops/fen';
+import { PromotionRole } from 'chessops/types';
 import { 
   BoardStateManager, 
   createBoardState, 
@@ -36,7 +37,7 @@ export function useChessboard(options: UseChessboardOptions = {}) {
     }
   }, [state, options.onChange]);
 
-  const makeMove = useCallback((from: string, to: string, promotion?: 'queen' | 'rook' | 'bishop' | 'knight') => {
+  const makeMove = useCallback((from: string, to: string, promotion?: PromotionRole) => {
     const newState = makeMoveUtil(state, from, to, promotion);
     if (newState) {
       setState(newState);

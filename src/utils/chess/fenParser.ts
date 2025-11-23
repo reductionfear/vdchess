@@ -1,7 +1,7 @@
-import { parseFen, makeFen, Chess } from 'chessops/chess';
+import { parseFen, makeFen } from 'chessops/fen';
+import { Chess } from 'chessops/chess';
 import { parseSan, makeSan } from 'chessops/san';
 import { parseSquare, makeSquare } from 'chessops/util';
-import { parseUci } from 'chessops/util';
 
 /**
  * Parse a FEN string and return a Chess position

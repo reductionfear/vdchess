@@ -1,11 +1,12 @@
 import { Chess } from 'chessops/chess';
 import { makeSan, parseSan } from 'chessops/san';
 import { parseSquare, makeSquare } from 'chessops/util';
+import { PromotionRole } from 'chessops/types';
 
 /**
  * Generate SAN (Standard Algebraic Notation) for a move
  */
-export function generateSan(chess: Chess, from: string, to: string, promotion?: string): string | null {
+export function generateSan(chess: Chess, from: string, to: string, promotion?: PromotionRole): string | null {
   const fromSquare = parseSquare(from);
   const toSquare = parseSquare(to);
   
@@ -16,7 +17,7 @@ export function generateSan(chess: Chess, from: string, to: string, promotion?: 
   const move = {
     from: fromSquare,
     to: toSquare,
-    promotion: promotion as any,
+    promotion,
   };
   
   try {
@@ -40,7 +41,7 @@ export function parseSanMove(chess: Chess, san: string) {
 /**
  * Convert a move to UCI notation (e.g., "e2e4")
  */
-export function moveToUci(from: number, to: number, promotion?: string): string {
+export function moveToUci(from: number, to: number, promotion?: PromotionRole): string {
   let uci = makeSquare(from) + makeSquare(to);
   if (promotion) {
     uci += promotion;

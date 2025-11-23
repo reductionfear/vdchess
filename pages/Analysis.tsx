@@ -78,7 +78,7 @@ const Analysis: React.FC = () => {
 
           {/* Instructions */}
           <div className="mb-6 bg-slate-800 p-4 rounded-lg border border-slate-700">
-            <h3 className="text-sm font-semibold text-slate-200 mb-2">Controls</h3>
+            <h3 className="text-sm font-semibold text-slate-200 mb-2">Controls & Features</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-slate-400">
               <div>• <kbd className="px-2 py-1 bg-slate-900 rounded">←</kbd> Previous move</div>
               <div>• <kbd className="px-2 py-1 bg-slate-900 rounded">→</kbd> Next move</div>
@@ -86,6 +86,8 @@ const Analysis: React.FC = () => {
               <div>• <kbd className="px-2 py-1 bg-slate-900 rounded">End</kbd> Last move</div>
               <div>• Mouse wheel on board to navigate moves</div>
               <div>• Click moves in the list to jump to that position</div>
+              <div>• Adjust board appearance in settings panel</div>
+              <div>• Use tabs below move list for more features</div>
             </div>
           </div>
 
@@ -120,7 +122,8 @@ const Analysis: React.FC = () => {
                 <li>✓ Mouse wheel scroll navigation</li>
                 <li>✓ Keyboard arrow key navigation</li>
                 <li>✓ Move list click navigation</li>
-                <li>✓ Touch support ready</li>
+                <li>✓ SVG arrows and circles overlay</li>
+                <li>✓ Last move highlighting</li>
               </ul>
             </div>
 
@@ -140,9 +143,9 @@ const Analysis: React.FC = () => {
               <ul className="text-sm text-slate-400 space-y-1">
                 <li>✓ Move history with SAN notation</li>
                 <li>✓ FEN display and loading</li>
-                <li>✓ PGN export</li>
+                <li>✓ PGN export and copy</li>
                 <li>✓ Position evaluation display</li>
-                <li>✓ Copy to clipboard</li>
+                <li>✓ Tabbed underboard menu</li>
               </ul>
             </div>
           </div>
