@@ -5,8 +5,10 @@ import { useChessboard } from '../../hooks/useChessboard';
 import { useAnalysis } from '../../hooks/useAnalysis';
 import BoardControls from '../Board/BoardControls';
 import BoardSettings from '../Board/BoardSettings';
+import ChessBoardAnalysis from '../Board/ChessBoardAnalysis';
 import MoveList from './MoveList';
 import Evaluation from './Evaluation';
+import UnderboardMenu from './UnderboardMenu';
 
 interface AnalysisBoardProps {
   initialFen?: string;
@@ -51,6 +53,10 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
   // Analysis settings
   const {
     settings,
+    arrows,
+    circles,
+    addArrow,
+    clearShapes,
     updateBoardOpacity,
     updateBoardBrightness,
     updateBoardHue,
@@ -145,17 +151,46 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     setFlipped(prev => !prev);
   }, []);
 
+  // Handle square click - could be used for drawing arrows
+  const handleSquareClick = useCallback((square: string) => {
+    // Placeholder for future interaction
+    console.log('Square clicked:', square);
+  }, []);
+
+  // Get last move for highlighting
+  const getLastMove = () => {
+    if (moveHistory.length === 0 || currentMoveIndex < 0) {
+      return undefined;
+    }
+    const lastMove = moveHistory[currentMoveIndex];
+    return lastMove ? { from: lastMove.from, to: lastMove.to } : undefined;
+  };
+
   // Handle copy to clipboard
   const handleCopy = useCallback(async () => {
     try {
       const fen = getCurrentFen();
       await navigator.clipboard.writeText(fen);
-      // Could show a toast notification here
       console.log('FEN copied to clipboard:', fen);
     } catch (error) {
       console.error('Failed to copy FEN:', error);
     }
   }, [getCurrentFen]);
+
+  // Handle copy PGN to clipboard
+  const handleCopyPgn = useCallback(async () => {
+    try {
+      const pgn = getPgn({
+        Event: 'Analysis',
+        Site: 'VDChess',
+        Date: new Date().toISOString().split('T')[0],
+      });
+      await navigator.clipboard.writeText(pgn);
+      console.log('PGN copied to clipboard');
+    } catch (error) {
+      console.error('Failed to copy PGN:', error);
+    }
+  }, [getPgn]);
 
   // Handle download PGN
   const handleDownload = useCallback(() => {
@@ -176,53 +211,6 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     URL.revokeObjectURL(url);
   }, [getPgn]);
 
-  // Render a simple board representation (placeholder)
-  // In a real implementation, you would integrate with a chess board library like chessground
-  const renderBoard = () => {
-    const pieces = state.position.board;
-    const squares = [];
-
-    for (let rank = 7; rank >= 0; rank--) {
-      for (let file = 0; file < 8; file++) {
-        const square = flipped ? (7 - rank) * 8 + (7 - file) : rank * 8 + file;
-        const piece = pieces.get(square);
-        const isLight = (rank + file) % 2 === 0;
-
-        squares.push(
-          <div
-            key={square}
-            className={`
-              chess-square aspect-square flex items-center justify-center text-4xl
-              ${isLight ? 'bg-[#ebecd0]' : 'bg-[#779556]'}
-            `}
-            data-square={square}
-          >
-            {piece && (
-              <span className="chess-piece select-none">
-                {getPieceSymbol(piece.role, piece.color)}
-              </span>
-            )}
-          </div>
-        );
-      }
-    }
-
-    return squares;
-  };
-
-  const getPieceSymbol = (role: string, color: string) => {
-    const isWhite = color === 'white';
-    const symbols: Record<string, string> = {
-      pawn: isWhite ? '♙' : '♟',
-      knight: isWhite ? '♘' : '♞',
-      bishop: isWhite ? '♗' : '♝',
-      rook: isWhite ? '♖' : '♜',
-      queen: isWhite ? '♕' : '♛',
-      king: isWhite ? '♔' : '♚',
-    };
-    return symbols[role] || '';
-  };
-
   const boardStyle = getBoardStyle();
 
   return (
@@ -236,9 +224,15 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
             className="relative mx-auto max-w-2xl"
             style={boardStyle}
           >
-            <div className="grid grid-cols-8 border-4 border-slate-700 rounded-lg overflow-hidden shadow-2xl bg-slate-800">
-              {renderBoard()}
-            </div>
+            <ChessBoardAnalysis
+              position={state.position}
+              flipped={flipped}
+              showCoordinates={settings.showCoordinates}
+              lastMove={settings.highlightLastMove ? getLastMove() : undefined}
+              arrows={arrows}
+              circles={circles}
+              onSquareClick={handleSquareClick}
+            />
           </div>
 
           {/* Controls */}
@@ -296,6 +290,19 @@ const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
               onMoveClick={goToMove}
             />
           )}
+
+          {/* Underboard Menu */}
+          <UnderboardMenu
+            currentFen={getCurrentFen()}
+            pgn={getPgn({
+              Event: 'Analysis',
+              Site: 'VDChess',
+              Date: new Date().toISOString().split('T')[0],
+            })}
+            onCopyFen={handleCopy}
+            onCopyPgn={handleCopyPgn}
+            onDownloadPgn={handleDownload}
+          />
         </div>
       </div>
     </div>
